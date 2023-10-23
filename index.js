@@ -32,9 +32,20 @@ app.post("/posts", (req, res)=>{
     res.sendStatus(200)
 })
 
-// app.get("/posts", (req, res)=>{
-    
-// })
+app.get("/posts", async(req, res)=>{
+    const blogs=await Blog.find({})
+    res.json(blogs)
+})
+
+app.get("/posts/:id", async(req, res) => {
+    const blog=await Blog.find({_id:req.params.id}).exec()
+    if (blog) {
+      res.json(blog)
+    }
+    else {
+      res.sendStatus(404)
+    }
+})
 
 app.listen(PORT, ()=>{
     console.log(`Listening at port number: ${PORT}...`)
