@@ -29,7 +29,7 @@ app.post("/posts", (req, res)=>{
     })
 
     blog.save()
-    res.sendStatus(200)
+    res.json({message: "Blog posted."})
 })
 
 app.get("/posts", async(req, res)=>{
@@ -38,13 +38,21 @@ app.get("/posts", async(req, res)=>{
 })
 
 app.get("/posts/:id", async(req, res) => {
-    const blog=await Blog.find({_id:req.params.id}).exec()
-    if (blog) {
-      res.json(blog)
-    }
-    else {
-      res.sendStatus(404)
-    }
+    const blog=await Blog.findById(req.params.id)
+    res.json(blog)
+})
+
+app.patch("/posts/:id", async (req, res)=>{
+    if(req.body.title) await Blog.updateOne({_id:req.params.id}, {title:req.body.title})
+    if(req.body.content) await Blog.updateOne({_id:req.params.id}, {content:req.body.content})
+    if(req.body.author) await Blog.updateOne({_id:req.params.id}, {author:req.body.author})
+
+    res.json({message: "Blog updated."})
+})
+
+app.delete("/posts/:id", async(req, res)=>{
+    await Blog.findByIdAndDelete(req.params.id)
+    res.json({message:"Blog deleted."})
 })
 
 app.listen(PORT, ()=>{
